@@ -2,240 +2,150 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Shop – SGWEN X</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<title>Shop – SGWEN X</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-body{
-  margin:0;
-  font-family:'Poppins',sans-serif;
-  background:linear-gradient(135deg,#6a11cb,#2575fc);
-  color:#fff;
-}
-nav{
-  display:flex;
-  justify-content:center;
-  padding:20px;
-  background:rgba(0,0,0,.5);
-}
-nav ul{list-style:none;display:flex;gap:40px;padding:0;margin:0}
-nav a{color:#ffd700;text-decoration:none;font-weight:600}
-
-#password-screen{
-  height:80vh;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  gap:10px;
-}
-.pass-box{position:relative}
-.pass-box input{
-  padding:12px 40px 12px 12px;
-  border-radius:6px;border:none
-}
-.eye{
-  position:absolute;right:10px;top:50%;
-  transform:translateY(-50%);
-  cursor:pointer;color:#000
-}
-#password-screen button{
-  padding:10px 25px;border:none;border-radius:6px;
-  background:#ffd700;cursor:pointer
-}
-
-#shop-content{display:none;padding:40px;text-align:center}
-
-.items{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:20px;margin-top:20px
-}
-.box{
-  background:rgba(255,255,255,.15);
-  padding:20px;border-radius:12px
-}
-.counter{display:flex;justify-content:center;gap:10px}
-.counter button{
-  width:30px;border:none;background:#ffd700;cursor:pointer
-}
-.add{margin-top:10px;padding:8px 20px;border:none;background:#ffd700;cursor:pointer}
-
-#order-box{
-  margin-top:30px;
-  background:rgba(255,255,255,.15);
-  padding:20px;border-radius:12px
-}
-#send-btn{
-  margin-top:15px;padding:10px 30px;
-  background:green;color:#fff;border:none;cursor:pointer
-}
+body{margin:0;font-family:Poppins,sans-serif;background:linear-gradient(135deg,#6a11cb,#2575fc);color:#fff;overflow-x:hidden}
+nav{display:flex;justify-content:center;padding:20px 0;background:rgba(0,0,0,.5);position:sticky;top:0;z-index:10}
+nav ul{display:flex;gap:40px;list-style:none;margin:0;padding:0}
+nav ul li a{text-decoration:none;color:#ffd700;font-weight:600;font-size:18px}
+.fade{animation:fadeIn .8s ease-in-out}
+@keyframes fadeIn{0%{opacity:0;transform:translateY(20px)}100%{opacity:1;transform:translateY(0)}}
+#password-screen{height:calc(100vh - 80px);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:20px}
+.password-container{position:relative}
+.password-container input{padding:12px 40px 12px 12px;border-radius:6px}
+.toggle-eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer}
+#shop-content{display:none;padding:40px 20px;text-align:center}
+.items-container{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:25px;margin-top:30px}
+.item-box{background:rgba(255,255,255,.1);padding:25px;border-radius:12px}
+.counter{display:flex;justify-content:center;gap:12px;margin-bottom:12px}
+.counter button{width:30px;height:30px;border:none;background:#ffd700;border-radius:5px}
+.add-btn{padding:8px 20px;border:none;background:#ffd700;color:black;border-radius:5px;font-weight:bold}
+#order-list{margin-top:40px;padding:25px;background:rgba(255,255,255,.1);border-radius:10px;border:1px solid #fff}
+#send-btn{padding:12px 25px;border:none;background:green;color:white;font-weight:bold;border-radius:6px;margin-top:20px}
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<!-- 🔥 Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "PUT_API_KEY_HERE",
+  authDomain: "SGWEN-X.firebaseapp.com",
+  projectId: "SGWEN-X",
+  appId: "PUT_APP_ID_HERE"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+let currentUserName = "Guest";
+let authReady = false;
+
+setPersistence(auth, browserLocalPersistence);
+
+onAuthStateChanged(auth, (user) => {
+  if (user) currentUserName = user.displayName || user.email;
+  authReady = true;
+});
+
+window.getCurrentUserName = () => currentUserName;
+window.isAuthReady = () => authReady;
+</script>
 </head>
 
 <body>
 
 <nav>
-  <ul>
-    <li><a href="home.html">Home</a></li>
-    <li><a href="archive.html">Archive</a></li>
-    <li><a href="gallery.html">Gallery</a></li>
-    <li><a href="calendar.html">Calendar</a></li>
-  </ul>
+<ul>
+<li><a href="home.html">Home</a></li>
+<li><a href="archive.html">Archive</a></li>
+<li><a href="gallery.html">Gallery</a></li>
+<li><a href="calendar.html">Calendar</a></li>
+</ul>
 </nav>
 
-<!-- PASSWORD -->
-<div id="password-screen">
-  <h2>Enter Password</h2>
-  <div class="pass-box">
-    <input type="password" id="pass">
-    <span class="eye" id="eye">👁️</span>
-  </div>
-  <button id="enterBtn">Enter</button>
+<div id="password-screen" class="fade">
+<h2>Enter Password</h2>
+<div class="password-container">
+<input type="password" id="pass">
+<span class="toggle-eye" onclick="togglePassword()">👁️</span>
+</div>
+<button onclick="checkPass()">Enter</button>
 </div>
 
-<!-- SHOP -->
-<div id="shop-content">
-  <h2 id="welcome">Shop</h2>
-
-  <div class="items">
-    <div class="box">
-      <h3>Tent</h3>
-      <div class="counter">
-        <button onclick="change('tent',-1)">-</button>
-        <span id="tent">0</span>
-        <button onclick="change('tent',1)">+</button>
-      </div>
-      <button class="add" onclick="addItem('Tent')">Add</button>
-    </div>
-
-    <div class="box">
-      <h3>Rope</h3>
-      <div class="counter">
-        <button onclick="change('rope',-1)">-</button>
-        <span id="rope">0</span>
-        <button onclick="change('rope',1)">+</button>
-      </div>
-      <button class="add" onclick="addItem('Rope')">Add</button>
-    </div>
-
-    <div class="box">
-      <h3>Wood</h3>
-      <div class="counter">
-        <button onclick="change('wood',-1)">-</button>
-        <span id="wood">0</span>
-        <button onclick="change('wood',1)">+</button>
-      </div>
-      <button class="add" onclick="addItem('Wood')">Add</button>
-    </div>
-
-    <div class="box">
-      <h3>Pots</h3>
-      <div class="counter">
-        <button onclick="change('pots',-1)">-</button>
-        <span id="pots">0</span>
-        <button onclick="change('pots',1)">+</button>
-      </div>
-      <button class="add" onclick="addItem('Pots')">Add</button>
-    </div>
-  </div>
-
-  <div id="order-box">
-    <h3>Your Order</h3>
-    <div id="order-items"></div>
-    <button id="send-btn">Send Order</button>
-  </div>
+<div id="shop-content" class="fade">
+<h2>Shop Items</h2>
+<div class="items-container">
+<div class="item-box"><div class="item-title">Tent</div><div class="counter"><button onclick="change('tent',-1)">-</button><span id="tent">0</span><button onclick="change('tent',1)">+</button></div><button class="add-btn" onclick="addItem('Tent')">Add</button></div>
+<div class="item-box"><div class="item-title">Rope</div><div class="counter"><button onclick="change('rope',-1)">-</button><span id="rope">0</span><button onclick="change('rope',1)">+</button></div><button class="add-btn" onclick="addItem('Rope')">Add</button></div>
+<div class="item-box"><div class="item-title">Wood</div><div class="counter"><button onclick="change('wood',-1)">-</button><span id="wood">0</span><button onclick="change('wood',1)">+</button></div><button class="add-btn" onclick="addItem('Wood')">Add</button></div>
+<div class="item-box"><div class="item-title">Pots</div><div class="counter"><button onclick="change('pots',-1)">-</button><span id="pots">0</span><button onclick="change('pots',1)">+</button></div><button class="add-btn" onclick="addItem('Pots')">Add</button></div>
 </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<div id="order-list">
+<h3>Your Order:</h3>
+<div id="order-items"></div>
+<button id="send-btn" onclick="sendOrder()">Send Order</button>
+</div>
+</div>
 
-/* Firebase config */
-const firebaseConfig = {
-  apiKey: "AIzaSyDMzEwys8RxGsehCJ2VlrnJeiAa_WY9Lgc",
-  authDomain: "sgwen-x.firebaseapp.com",
-  projectId: "sgwen-x"
-};
+<script>
+document.getElementById("pass").addEventListener("keydown",e=>{if(e.key==="Enter")checkPass()})
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-let userName = "Unknown";
-
-/* Get user name from Firestore */
-onAuthStateChanged(auth, async(user)=>{
-  if(user){
-    const snap = await getDoc(doc(db,"users",user.uid));
-    if(snap.exists()){
-      userName = snap.data().name;
-      document.getElementById("welcome").innerText =
-        "Logged in by: " + userName;
-    }
-  }
-});
-
-/* Password logic */
-const passInput = document.getElementById("pass");
-document.getElementById("eye").onclick = ()=>{
-  passInput.type = passInput.type==="password" ? "text" : "password";
-};
-document.getElementById("enterBtn").onclick = ()=>{
-  if(passInput.value === "sgwen123"){
+function checkPass(){
+  const pass=document.getElementById("pass").value;
+  if(pass==="sgwen123"){
     document.getElementById("password-screen").style.display="none";
     document.getElementById("shop-content").style.display="block";
-  }else{
-    alert("Wrong password");
-  }
-};
+  } else alert("Wrong password!");
+}
 
-/* Order logic */
-let order = [];
+function togglePassword(){
+  const input=document.getElementById("pass");
+  input.type=input.type==="password"?"text":"password";
+}
 
-window.change = (id,val)=>{
-  const el = document.getElementById(id);
-  let n = parseInt(el.innerText) + val;
-  if(n<0) n=0;
-  el.innerText = n;
-};
+function change(id,a){
+  let el=document.getElementById(id);
+  let n=parseInt(el.innerText)+a;
+  if(n<0)n=0;
+  el.innerText=n;
+}
 
-window.addItem = (name)=>{
-  const q = document.getElementById(name.toLowerCase()).innerText;
-  if(q==0) return;
-  order.push(name + " x " + q);
-  document.getElementById("order-items").innerHTML = order.join("<br>");
-};
+let order=[];
+function addItem(n){
+  let q=document.getElementById(n.toLowerCase()).innerText;
+  if(q==0)return alert("Quantity must be > 0");
+  order.push(`${n} x ${q}`);
+  document.getElementById("order-items").innerHTML=order.join("<br>");
+}
 
-/* EmailJS */
 emailjs.init("R343iEUpx16F3VYfz");
 
-document.getElementById("send-btn").onclick = ()=>{
-  if(order.length===0){
-    alert("No items added");
-    return;
-  }
+function sendOrder(){
+  if(order.length==0){alert("No items added");return}
+  if(!window.isAuthReady()){alert("Loading user...");return}
+
+  const username=window.getCurrentUserName();
 
   emailjs.send("service_21rqokl","template_hwaelip",{
-    user: userName,
-    order: order.join("\n")
+    username:username,
+    order_text:order.join("\n")
   }).then(()=>{
-    alert("Order sent ✅");
+    let b=document.getElementById("send-btn");
+    b.innerText="Sent";
     order=[];
     document.getElementById("order-items").innerHTML="";
-    ["tent","rope","wood","pots"].forEach(i=>{
-      document.getElementById(i).innerText="0";
-    });
-  }).catch(err=>{
-    alert("Send failed");
-    console.log(err);
-  });
-};
+    ["tent","rope","wood","pots"].forEach(id=>document.getElementById(id).innerText="0");
+    setTimeout(()=>b.innerText="Send Order",2000);
+  })
+}
 </script>
 
 </body>
