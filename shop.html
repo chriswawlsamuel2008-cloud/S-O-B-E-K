@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Shop – SGWEN X</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop – SGWEN X</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
@@ -12,64 +12,95 @@ body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
   background: linear-gradient(135deg, #6a11cb, #2575fc);
-  color: white;
+  color: #fff;
 }
 
+/* NAVBAR */
 nav {
   display: flex;
   justify-content: center;
   padding: 20px;
-  background: rgba(0,0,0,0.4);
+  background: rgba(0,0,0,0.5);
 }
-
+nav ul {
+  display: flex;
+  gap: 40px;
+  list-style: none;
+}
 nav a {
   color: #ffd700;
-  margin: 0 20px;
   text-decoration: none;
-  font-weight: 600;
+  font-weight: bold;
 }
 
-.container {
+/* PASSWORD */
+#password-screen {
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+#password-screen input {
+  padding: 12px;
+  border-radius: 6px;
+  border: none;
+}
+#password-screen button {
+  margin-top: 10px;
+  padding: 10px 25px;
+  background: #ffd700;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* SHOP */
+#shop-content {
+  display: none;
   padding: 40px;
   text-align: center;
 }
-
 .items {
   display: grid;
   grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
-  gap: 25px;
-  margin-top: 30px;
+  gap: 20px;
 }
-
-.item {
+.box {
   background: rgba(255,255,255,0.15);
   padding: 20px;
   border-radius: 12px;
 }
-
 .counter {
   display: flex;
   justify-content: center;
   gap: 10px;
-  margin: 10px 0;
 }
-
 .counter button {
   width: 30px;
-  border: none;
-  border-radius: 5px;
   background: #ffd700;
+  border: none;
+}
+.add {
+  margin-top: 10px;
+  background: #ffd700;
+  border: none;
+  padding: 8px 20px;
   cursor: pointer;
 }
 
-button.send {
+#order-box {
   margin-top: 30px;
-  padding: 12px 25px;
-  border: none;
+  background: rgba(255,255,255,0.15);
+  padding: 20px;
+  border-radius: 12px;
+}
+#send-btn {
+  margin-top: 15px;
+  padding: 10px 30px;
   background: green;
   color: white;
-  font-weight: bold;
-  border-radius: 8px;
+  border: none;
   cursor: pointer;
 }
 </style>
@@ -80,59 +111,71 @@ button.send {
 <body>
 
 <nav>
-  <a href="home.html">Home</a>
-  <a href="shop.html">Shop</a>
+  <ul>
+    <li><a href="home.html">Home</a></li>
+    <li><a href="archive.html">Archive</a></li>
+    <li><a href="gallery.html">Gallery</a></li>
+    <li><a href="calendar.html">Calendar</a></li>
+  </ul>
 </nav>
 
-<div class="container">
+<!-- PASSWORD -->
+<div id="password-screen">
+  <h2>Enter Password</h2>
+  <input type="password" id="pass">
+  <button onclick="checkPass()">Enter</button>
+</div>
+
+<!-- SHOP -->
+<div id="shop-content">
   <h2>Shop Items</h2>
-  <p id="userName">Loading user...</p>
 
   <div class="items">
-
-    <div class="item">
+    <div class="box">
       <h3>Tent</h3>
       <div class="counter">
         <button onclick="change('tent',-1)">-</button>
         <span id="tent">0</span>
         <button onclick="change('tent',1)">+</button>
       </div>
-      <button onclick="addItem('Tent')">Add</button>
+      <button class="add" onclick="addItem('Tent')">Add</button>
     </div>
 
-    <div class="item">
+    <div class="box">
       <h3>Rope</h3>
       <div class="counter">
         <button onclick="change('rope',-1)">-</button>
         <span id="rope">0</span>
         <button onclick="change('rope',1)">+</button>
       </div>
-      <button onclick="addItem('Rope')">Add</button>
+      <button class="add" onclick="addItem('Rope')">Add</button>
     </div>
 
-    <div class="item">
+    <div class="box">
       <h3>Wood</h3>
       <div class="counter">
         <button onclick="change('wood',-1)">-</button>
         <span id="wood">0</span>
         <button onclick="change('wood',1)">+</button>
       </div>
-      <button onclick="addItem('Wood')">Add</button>
+      <button class="add" onclick="addItem('Wood')">Add</button>
     </div>
-
   </div>
 
-  <h3>Your Order</h3>
-  <div id="orderList"></div>
-
-  <button class="send" onclick="sendOrder()">Send Order</button>
+  <div id="order-box">
+    <h3>Your Order</h3>
+    <div id="order-items"></div>
+    <button id="send-btn" onclick="sendOrder()">Send Order</button>
+  </div>
 </div>
 
-<!-- 🔥 FIREBASE + LOGIC -->
+<!-- FIREBASE + LOGIC -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+/* Firebase */
 const firebaseConfig = {
   apiKey: "AIzaSyDMzEwys8RxGsehCJ2VlrnJeiAa_WY9Lgc",
   authDomain: "sgwen-x.firebaseapp.com",
@@ -144,58 +187,63 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-emailjs.init("R343iEUpx16F3VYfz");
+let userName = "User";
 
-let currentUserName = "";
-let currentUserEmail = "";
-let order = [];
-
-// 🔐 Check logged user
-onAuthStateChanged(auth, user => {
-  if (!user) {
-    alert("Please login first");
-    window.location.href = "login.html";
-  } else {
-    currentUserEmail = user.email;
-    currentUserName = user.displayName || user.email;
-    document.getElementById("userName").innerText = "Logged in as: " + currentUserName;
+/* Get name from Firebase */
+onAuthStateChanged(auth, async (user) => {
+  if(user){
+    const snap = await getDoc(doc(db,"users",user.uid));
+    if(snap.exists()){
+      userName = snap.data().name;
+    }
   }
 });
 
-// Counter
-window.change = function(id, val){
+/* PASSWORD */
+window.checkPass = function(){
+  if(document.getElementById("pass").value === "sgwen123"){
+    document.getElementById("password-screen").style.display="none";
+    document.getElementById("shop-content").style.display="block";
+  } else {
+    alert("Wrong password");
+  }
+}
+
+/* COUNTER */
+window.change = function(id,val){
   let el = document.getElementById(id);
-  let num = parseInt(el.innerText) + val;
-  if(num < 0) num = 0;
-  el.innerText = num;
-};
+  let n = parseInt(el.innerText)+val;
+  if(n<0) n=0;
+  el.innerText = n;
+}
 
-// Add item
+/* ORDER */
+let order=[];
 window.addItem = function(name){
-  let qty = document.getElementById(name.toLowerCase()).innerText;
-  if(qty == 0) return alert("Quantity must be more than 0");
-  order.push(name + " x " + qty);
-  document.getElementById("orderList").innerHTML = order.join("<br>");
-};
+  let q = document.getElementById(name.toLowerCase()).innerText;
+  if(q==0) return;
+  order.push(name+" x "+q);
+  document.getElementById("order-items").innerHTML = order.join("<br>");
+}
 
-// Send order
+/* EMAILJS */
+emailjs.init("R343iEUpx16F3VYfz");
+
 window.sendOrder = function(){
-  if(order.length === 0) return alert("No items added");
+  if(order.length==0) return alert("No items");
 
   emailjs.send("service_21rqokl","template_hwaelip",{
-    username: currentUserName,
-    user_email: currentUserEmail,
-    order_text: order.join("\n")
-  }).then(() => {
-    alert("Order sent successfully ✅");
-    order = [];
-    document.getElementById("orderList").innerHTML = "";
-    ["tent","rope","wood"].forEach(i => document.getElementById(i).innerText = "0");
-  }, err => {
-    alert("Error sending order");
+    user: userName,
+    order: order.join("\n")
+  }).then(()=>{
+    alert("Order sent successfully");
+    order=[];
+    document.getElementById("order-items").innerHTML="";
+    ["tent","rope","wood"].forEach(i=>document.getElementById(i).innerText="0");
   });
-};
+}
 </script>
 
 </body>
