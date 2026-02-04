@@ -2,106 +2,116 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shop – SGWEN X</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-body {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
-  color: #fff;
+body{
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background:linear-gradient(135deg,#6a11cb,#2575fc);
+  color:white;
 }
 
-/* NAVBAR */
-nav {
-  display: flex;
-  justify-content: center;
-  padding: 20px;
-  background: rgba(0,0,0,0.5);
+/* NAV */
+nav{
+  display:flex;
+  justify-content:center;
+  padding:20px;
+  background:rgba(0,0,0,.5);
 }
-nav ul {
-  display: flex;
-  gap: 40px;
-  list-style: none;
+nav ul{
+  display:flex;
+  gap:40px;
+  list-style:none;
 }
-nav a {
-  color: #ffd700;
-  text-decoration: none;
-  font-weight: bold;
+nav a{
+  color:#ffd700;
+  text-decoration:none;
+  font-weight:600;
 }
 
 /* PASSWORD */
-#password-screen {
-  height: 80vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+#password-screen{
+  height:80vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
 }
-#password-screen input {
-  padding: 12px;
-  border-radius: 6px;
-  border: none;
+.pass-box{
+  position:relative;
 }
-#password-screen button {
-  margin-top: 10px;
-  padding: 10px 25px;
-  background: #ffd700;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+.pass-box input{
+  padding:12px 40px 12px 12px;
+  border-radius:6px;
+  border:none;
+}
+.eye{
+  position:absolute;
+  right:10px;
+  top:50%;
+  transform:translateY(-50%);
+  cursor:pointer;
+  color:black;
+}
+#password-screen button{
+  margin-top:10px;
+  padding:10px 25px;
+  background:#ffd700;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
 }
 
 /* SHOP */
-#shop-content {
-  display: none;
-  padding: 40px;
-  text-align: center;
+#shop-content{
+  display:none;
+  padding:40px;
+  text-align:center;
 }
-.items {
-  display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
-  gap: 20px;
+.items{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:20px;
 }
-.box {
-  background: rgba(255,255,255,0.15);
-  padding: 20px;
-  border-radius: 12px;
+.box{
+  background:rgba(255,255,255,.15);
+  padding:20px;
+  border-radius:12px;
 }
-.counter {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
+.counter{
+  display:flex;
+  justify-content:center;
+  gap:10px;
 }
-.counter button {
-  width: 30px;
-  background: #ffd700;
-  border: none;
+.counter button{
+  width:30px;
+  background:#ffd700;
+  border:none;
 }
-.add {
-  margin-top: 10px;
-  background: #ffd700;
-  border: none;
-  padding: 8px 20px;
-  cursor: pointer;
+.add{
+  margin-top:10px;
+  background:#ffd700;
+  border:none;
+  padding:8px 20px;
+  cursor:pointer;
 }
-
-#order-box {
-  margin-top: 30px;
-  background: rgba(255,255,255,0.15);
-  padding: 20px;
-  border-radius: 12px;
+#order-box{
+  margin-top:30px;
+  background:rgba(255,255,255,.15);
+  padding:20px;
+  border-radius:12px;
 }
-#send-btn {
-  margin-top: 15px;
-  padding: 10px 30px;
-  background: green;
-  color: white;
-  border: none;
-  cursor: pointer;
+#send-btn{
+  margin-top:15px;
+  padding:10px 30px;
+  background:green;
+  color:white;
+  border:none;
+  cursor:pointer;
 }
 </style>
 
@@ -111,24 +121,27 @@ nav a {
 <body>
 
 <nav>
-  <ul>
-    <li><a href="home.html">Home</a></li>
-    <li><a href="archive.html">Archive</a></li>
-    <li><a href="gallery.html">Gallery</a></li>
-    <li><a href="calendar.html">Calendar</a></li>
-  </ul>
+<ul>
+<li><a href="home.html">Home</a></li>
+<li><a href="archive.html">Archive</a></li>
+<li><a href="gallery.html">Gallery</a></li>
+<li><a href="calendar.html">Calendar</a></li>
+</ul>
 </nav>
 
 <!-- PASSWORD -->
 <div id="password-screen">
   <h2>Enter Password</h2>
-  <input type="password" id="pass">
+  <div class="pass-box">
+    <input type="password" id="pass">
+    <span class="eye" onclick="togglePass()">👁️</span>
+  </div>
   <button onclick="checkPass()">Enter</button>
 </div>
 
 <!-- SHOP -->
 <div id="shop-content">
-  <h2>Shop Items</h2>
+  <h2 id="welcome"></h2>
 
   <div class="items">
     <div class="box">
@@ -169,76 +182,73 @@ nav a {
   </div>
 </div>
 
-<!-- FIREBASE + LOGIC -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 /* Firebase */
-const firebaseConfig = {
-  apiKey: "AIzaSyDMzEwys8RxGsehCJ2VlrnJeiAa_WY9Lgc",
-  authDomain: "sgwen-x.firebaseapp.com",
-  projectId: "sgwen-x",
-  storageBucket: "sgwen-x.firebasestorage.app",
-  messagingSenderId: "387668410002",
-  appId: "1:387668410002:web:9479ebf474a151ebcbf04b"
+const firebaseConfig={
+  apiKey:"AIzaSyDMzEwys8RxGsehCJ2VlrnJeiAa_WY9Lgc",
+  authDomain:"sgwen-x.firebaseapp.com",
+  projectId:"sgwen-x",
 };
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+let userName="Unknown User";
 
-let userName = "User";
-
-/* Get name from Firebase */
-onAuthStateChanged(auth, async (user) => {
+/* GET USER NAME */
+onAuthStateChanged(auth, async(user)=>{
   if(user){
-    const snap = await getDoc(doc(db,"users",user.uid));
+    const snap=await getDoc(doc(db,"users",user.uid));
     if(snap.exists()){
-      userName = snap.data().name;
+      userName=snap.data().name;
+      document.getElementById("welcome").innerText="Logged in by: "+userName;
     }
   }
 });
 
 /* PASSWORD */
-window.checkPass = function(){
-  if(document.getElementById("pass").value === "sgwen123"){
-    document.getElementById("password-screen").style.display="none";
-    document.getElementById("shop-content").style.display="block";
-  } else {
-    alert("Wrong password");
-  }
+window.togglePass=()=>{
+  const p=document.getElementById("pass");
+  p.type=p.type==="password"?"text":"password";
+}
+window.checkPass=()=>{
+  if(pass.value==="sgwen123"){
+    password-screen.style.display="none";
+    shop-content.style.display="block";
+  }else alert("Wrong password");
 }
 
 /* COUNTER */
-window.change = function(id,val){
-  let el = document.getElementById(id);
-  let n = parseInt(el.innerText)+val;
-  if(n<0) n=0;
-  el.innerText = n;
+window.change=(id,v)=>{
+  let e=document.getElementById(id);
+  let n=parseInt(e.innerText)+v;
+  if(n<0)n=0;
+  e.innerText=n;
 }
 
 /* ORDER */
 let order=[];
-window.addItem = function(name){
-  let q = document.getElementById(name.toLowerCase()).innerText;
-  if(q==0) return;
+window.addItem=(name)=>{
+  let q=document.getElementById(name.toLowerCase()).innerText;
+  if(q==0)return;
   order.push(name+" x "+q);
-  document.getElementById("order-items").innerHTML = order.join("<br>");
+  document.getElementById("order-items").innerHTML=order.join("<br>");
 }
 
-/* EMAILJS */
+/* EMAIL */
 emailjs.init("R343iEUpx16F3VYfz");
-
-window.sendOrder = function(){
-  if(order.length==0) return alert("No items");
+window.sendOrder=()=>{
+  if(order.length==0)return alert("No items");
 
   emailjs.send("service_21rqokl","template_hwaelip",{
-    user: userName,
-    order: order.join("\n")
+    user_name:userName,
+    order_text:order.join("\n")
   }).then(()=>{
-    alert("Order sent successfully");
+    alert("Order sent");
     order=[];
     document.getElementById("order-items").innerHTML="";
     ["tent","rope","wood"].forEach(i=>document.getElementById(i).innerText="0");
