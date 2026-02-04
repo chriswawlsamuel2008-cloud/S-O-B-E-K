@@ -15,7 +15,6 @@ body{
   color:white;
 }
 
-/* NAV */
 nav{
   display:flex;
   justify-content:center;
@@ -33,7 +32,6 @@ nav a{
   font-weight:600;
 }
 
-/* PASSWORD */
 #password-screen{
   height:80vh;
   display:flex;
@@ -41,6 +39,7 @@ nav a{
   justify-content:center;
   align-items:center;
 }
+
 .pass-box{
   position:relative;
 }
@@ -57,6 +56,7 @@ nav a{
   cursor:pointer;
   color:black;
 }
+
 #password-screen button{
   margin-top:10px;
   padding:10px 25px;
@@ -66,32 +66,36 @@ nav a{
   cursor:pointer;
 }
 
-/* SHOP */
 #shop-content{
   display:none;
   padding:40px;
   text-align:center;
 }
+
 .items{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
   gap:20px;
 }
+
 .box{
   background:rgba(255,255,255,.15);
   padding:20px;
   border-radius:12px;
 }
+
 .counter{
   display:flex;
   justify-content:center;
   gap:10px;
 }
+
 .counter button{
   width:30px;
   background:#ffd700;
   border:none;
 }
+
 .add{
   margin-top:10px;
   background:#ffd700;
@@ -99,12 +103,14 @@ nav a{
   padding:8px 20px;
   cursor:pointer;
 }
+
 #order-box{
   margin-top:30px;
   background:rgba(255,255,255,.15);
   padding:20px;
   border-radius:12px;
 }
+
 #send-btn{
   margin-top:15px;
   padding:10px 30px;
@@ -134,16 +140,17 @@ nav a{
   <h2>Enter Password</h2>
   <div class="pass-box">
     <input type="password" id="pass">
-    <span class="eye" onclick="togglePass()">👁️</span>
+    <span class="eye" id="eye">👁️</span>
   </div>
-  <button onclick="checkPass()">Enter</button>
+  <button id="enterBtn">Enter</button>
 </div>
 
 <!-- SHOP -->
 <div id="shop-content">
-  <h2 id="welcome"></h2>
+  <h2 id="welcome">Logged in</h2>
 
   <div class="items">
+
     <div class="box">
       <h3>Tent</h3>
       <div class="counter">
@@ -164,21 +171,12 @@ nav a{
       <button class="add" onclick="addItem('Rope')">Add</button>
     </div>
 
-    <div class="box">
-      <h3>Wood</h3>
-      <div class="counter">
-        <button onclick="change('wood',-1)">-</button>
-        <span id="wood">0</span>
-        <button onclick="change('wood',1)">+</button>
-      </div>
-      <button class="add" onclick="addItem('Wood')">Add</button>
-    </div>
   </div>
 
   <div id="order-box">
     <h3>Your Order</h3>
     <div id="order-items"></div>
-    <button id="send-btn" onclick="sendOrder()">Send Order</button>
+    <button id="send-btn">Send Order</button>
   </div>
 </div>
 
@@ -187,19 +185,18 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-/* Firebase */
 const firebaseConfig={
   apiKey:"AIzaSyDMzEwys8RxGsehCJ2VlrnJeiAa_WY9Lgc",
   authDomain:"sgwen-x.firebaseapp.com",
-  projectId:"sgwen-x",
+  projectId:"sgwen-x"
 };
+
 const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getFirestore(app);
 
 let userName="Unknown User";
 
-/* GET USER NAME */
 onAuthStateChanged(auth, async(user)=>{
   if(user){
     const snap=await getDoc(doc(db,"users",user.uid));
@@ -211,38 +208,43 @@ onAuthStateChanged(auth, async(user)=>{
 });
 
 /* PASSWORD */
-window.togglePass=()=>{
-  const p=document.getElementById("pass");
-  p.type=p.type==="password"?"text":"password";
-}
-window.checkPass=()=>{
-  if(pass.value==="sgwen123"){
-    password-screen.style.display="none";
-    shop-content.style.display="block";
-  }else alert("Wrong password");
-}
+const passInput=document.getElementById("pass");
+const eye=document.getElementById("eye");
+const enterBtn=document.getElementById("enterBtn");
 
-/* COUNTER */
+eye.onclick=()=>{
+  passInput.type = passInput.type==="password" ? "text" : "password";
+};
+
+enterBtn.onclick=()=>{
+  if(passInput.value==="sgwen123"){
+    document.getElementById("password-screen").style.display="none";
+    document.getElementById("shop-content").style.display="block";
+  }else{
+    alert("Wrong password");
+  }
+};
+
+/* ORDER */
+let order=[];
 window.change=(id,v)=>{
   let e=document.getElementById(id);
   let n=parseInt(e.innerText)+v;
   if(n<0)n=0;
   e.innerText=n;
-}
+};
 
-/* ORDER */
-let order=[];
 window.addItem=(name)=>{
   let q=document.getElementById(name.toLowerCase()).innerText;
   if(q==0)return;
   order.push(name+" x "+q);
   document.getElementById("order-items").innerHTML=order.join("<br>");
-}
+};
 
-/* EMAIL */
 emailjs.init("R343iEUpx16F3VYfz");
-window.sendOrder=()=>{
-  if(order.length==0)return alert("No items");
+
+document.getElementById("send-btn").onclick=()=>{
+  if(order.length===0) return alert("No items");
 
   emailjs.send("service_21rqokl","template_hwaelip",{
     user_name:userName,
@@ -251,9 +253,10 @@ window.sendOrder=()=>{
     alert("Order sent");
     order=[];
     document.getElementById("order-items").innerHTML="";
-    ["tent","rope","wood"].forEach(i=>document.getElementById(i).innerText="0");
+    document.getElementById("tent").innerText="0";
+    document.getElementById("rope").innerText="0";
   });
-}
+};
 </script>
 
 </body>
