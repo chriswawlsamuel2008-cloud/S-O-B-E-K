@@ -126,9 +126,8 @@ nav a{color:#ffd700;text-decoration:none;font-weight:600}
       <div class="counter">
         <button onclick="change('wood',-1)">-</button>
         <span id="wood">0</span>
-        <button onclick="change('wood',1)">+</button>
+        <button class="add" onclick="addItem('Wood')">Add</button>
       </div>
-      <button class="add" onclick="addItem('Wood')">Add</button>
     </div>
 
     <div class="box">
@@ -168,12 +167,17 @@ const db = getFirestore(app);
 let userName = "Unknown";
 onAuthStateChanged(auth, async(user)=>{
   if(user){
-    const snap = await getDoc(doc(db,"users",user.uid));
-    if(snap.exists()){
-      userName = snap.data().name;  // الاسم من Firebase
+    const docRef = doc(db,"users",user.uid);
+    const docSnap = await getDoc(docRef);
+    if(docSnap.exists()){
+      userName = docSnap.data().name;
       document.getElementById("welcome").innerText = "Logged in by: " + userName;
       console.log("Firebase name:", userName);
+    } else {
+      console.log("No user doc found for this UID!");
     }
+  } else {
+    console.log("User not logged in");
   }
 });
 
@@ -186,11 +190,11 @@ document.getElementById("enterBtn").onclick = ()=>{
   if(passInput.value==="sgwen123"){
     document.getElementById("password-screen").style.display="none";
     document.getElementById("shop-content").style.display="block";
-  }else alert("Wrong password");
+  } else alert("Wrong password");
 };
 
 /* Order system */
-let order = {}; // object instead of array
+let order = {}; // object for each item
 window.change = (id,val)=>{
   const el = document.getElementById(id);
   let n = parseInt(el.innerText)+val;
@@ -201,7 +205,7 @@ window.change = (id,val)=>{
 window.addItem = (name)=>{
   const qty = parseInt(document.getElementById(name.toLowerCase()).innerText);
   if(qty===0) return alert("Quantity must be > 0");
-  order[name] = qty; // update or add
+  order[name] = qty;
   updateOrderDisplay();
 };
 
