@@ -2,126 +2,75 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Shop – SGWEN X</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<title>Shop – SGWEN X</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-body{
-  margin:0;
-  font-family:'Poppins',sans-serif;
-  background:linear-gradient(135deg,#6a11cb,#2575fc);
-  color:white;
-}
-
-nav{
-  display:flex;
-  justify-content:center;
-  padding:20px;
-  background:rgba(0,0,0,.5);
-}
-nav ul{
-  display:flex;
-  gap:40px;
-  list-style:none;
-}
-nav a{
-  color:#ffd700;
-  text-decoration:none;
-  font-weight:600;
-}
-
-#password-screen{
-  height:80vh;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-}
-
-.pass-box{
-  position:relative;
-}
-.pass-box input{
-  padding:12px 40px 12px 12px;
-  border-radius:6px;
-  border:none;
-}
-.eye{
-  position:absolute;
-  right:10px;
-  top:50%;
-  transform:translateY(-50%);
-  cursor:pointer;
-  color:black;
-}
-
-#password-screen button{
-  margin-top:10px;
-  padding:10px 25px;
-  background:#ffd700;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-}
-
-#shop-content{
-  display:none;
-  padding:40px;
-  text-align:center;
-}
-
-.items{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:20px;
-}
-
-.box{
-  background:rgba(255,255,255,.15);
-  padding:20px;
-  border-radius:12px;
-}
-
-.counter{
-  display:flex;
-  justify-content:center;
-  gap:10px;
-}
-
-.counter button{
-  width:30px;
-  background:#ffd700;
-  border:none;
-}
-
-.add{
-  margin-top:10px;
-  background:#ffd700;
-  border:none;
-  padding:8px 20px;
-  cursor:pointer;
-}
-
-#order-box{
-  margin-top:30px;
-  background:rgba(255,255,255,.15);
-  padding:20px;
-  border-radius:12px;
-}
-
-#send-btn{
-  margin-top:15px;
-  padding:10px 30px;
-  background:green;
-  color:white;
-  border:none;
-  cursor:pointer;
-}
+body { margin:0;font-family:Poppins,sans-serif;background:linear-gradient(135deg,#6a11cb,#2575fc);color:#fff;overflow-x:hidden;}
+nav{display:flex;justify-content:center;padding:20px 0;background:rgba(0,0,0,.5);position:sticky;top:0;z-index:10}
+nav ul{display:flex;gap:40px;list-style:none;margin:0;padding:0}
+nav ul li a{text-decoration:none;color:#ffd700;font-weight:600;font-size:18px;transition:.3s}
+nav ul li a:hover{color:#fff}
+.fade{animation:fadeIn .8s ease-in-out}
+@keyframes fadeIn{0%{opacity:0;transform:translateY(20px)}100%{opacity:1;transform:translateY(0)}}
+#password-screen{height:calc(100vh - 80px);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:20px}
+.password-container{position:relative;display:flex;align-items:center}
+.password-container input{padding:12px 40px 12px 12px;font-size:16px;border-radius:6px;border:1px solid #aaa}
+.toggle-eye{position:absolute;right:10px;cursor:pointer;font-size:18px;color:#000}
+#password-screen button{padding:12px 25px;font-size:16px;border:none;border-radius:6px;background:#ffd700;color:#000;font-weight:bold;cursor:pointer;transition:.3s}
+#password-screen button:hover{background:#fff}
+#shop-content{display:none;padding:40px 20px;text-align:center}
+.items-container{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:25px;margin-top:30px}
+.item-box{background:rgba(255,255,255,.1);padding:25px;border-radius:12px;transition:.3s}
+.item-box:hover{transform:translateY(-5px);box-shadow:0 8px 15px rgba(0,0,0,.3)}
+.item-title{font-size:20px;font-weight:600;margin-bottom:12px}
+.counter{display:flex;justify-content:center;align-items:center;gap:12px;margin-bottom:12px}
+.counter button{width:30px;height:30px;border:none;background:#ffd700;border-radius:5px;font-size:18px;cursor:pointer}
+.counter button:hover{background:#fff}
+.add-btn{padding:8px 20px;border:none;background:#ffd700;color:black;border-radius:5px;font-weight:bold;cursor:pointer}
+.add-btn:hover{background:#fff}
+#order-list{margin-top:40px;padding:25px;background:rgba(255,255,255,.1);border-radius:10px;border:1px solid #fff}
+#send-btn{padding:12px 25px;border:none;background:green;color:white;font-weight:bold;border-radius:6px;cursor:pointer;margin-top:20px}
+#send-btn:hover{background:#00ff00}
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<!-- 🔥 FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "PUT_API_KEY_HERE",
+  authDomain: "SGWEN-X.firebaseapp.com",
+  projectId: "SGWEN-X",
+  appId: "PUT_APP_ID_HERE"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+let currentUserName = "Guest";
+let authReady = false;
+
+// يخلي تسجيل الدخول محفوظ بين الصفحات
+setPersistence(auth, browserLocalPersistence);
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    currentUserName = user.displayName || user.email;
+    console.log("Logged in as:", currentUserName);
+  } else {
+    console.log("No user logged in");
+  }
+  authReady = true;
+});
+
+window.getCurrentUserName = () => currentUserName;
+window.isAuthReady = () => authReady;
+</script>
 </head>
 
 <body>
@@ -135,128 +84,56 @@ nav a{
 </ul>
 </nav>
 
-<!-- PASSWORD -->
-<div id="password-screen">
-  <h2>Enter Password</h2>
-  <div class="pass-box">
-    <input type="password" id="pass">
-    <span class="eye" id="eye">👁️</span>
-  </div>
-  <button id="enterBtn">Enter</button>
+<div id="password-screen" class="fade">
+<h2>Enter Password</h2>
+<div class="password-container">
+<input type="password" id="pass" onkeydown="if(event.key==='Enter'){checkPass();}">
+<span class="toggle-eye" onclick="togglePassword()">👁️</span>
+</div>
+<button onclick="checkPass()">Enter</button>
 </div>
 
-<!-- SHOP -->
-<div id="shop-content">
-  <h2 id="welcome">Logged in</h2>
-
-  <div class="items">
-
-    <div class="box">
-      <h3>Tent</h3>
-      <div class="counter">
-        <button onclick="change('tent',-1)">-</button>
-        <span id="tent">0</span>
-        <button onclick="change('tent',1)">+</button>
-      </div>
-      <button class="add" onclick="addItem('Tent')">Add</button>
-    </div>
-
-    <div class="box">
-      <h3>Rope</h3>
-      <div class="counter">
-        <button onclick="change('rope',-1)">-</button>
-        <span id="rope">0</span>
-        <button onclick="change('rope',1)">+</button>
-      </div>
-      <button class="add" onclick="addItem('Rope')">Add</button>
-    </div>
-
-  </div>
-
-  <div id="order-box">
-    <h3>Your Order</h3>
-    <div id="order-items"></div>
-    <button id="send-btn">Send Order</button>
-  </div>
+<div id="shop-content" class="fade">
+<h2>Shop Items</h2>
+<div class="items-container">
+<div class="item-box fade"><div class="item-title">Tent</div><div class="counter"><button onclick="change('tent', -1)">-</button><span id="tent">0</span><button onclick="change('tent', 1)">+</button></div><button class="add-btn" onclick="addItem('Tent')">Add</button></div>
+<div class="item-box fade"><div class="item-title">Rope</div><div class="counter"><button onclick="change('rope', -1)">-</button><span id="rope">0</span><button onclick="change('rope', 1)">+</button></div><button class="add-btn" onclick="addItem('Rope')">Add</button></div>
+<div class="item-box fade"><div class="item-title">Wood</div><div class="counter"><button onclick="change('wood', -1)">-</button><span id="wood">0</span><button onclick="change('wood', 1)">+</button></div><button class="add-btn" onclick="addItem('Wood')">Add</button></div>
+<div class="item-box fade"><div class="item-title">Pots</div><div class="counter"><button onclick="change('pots', -1)">-</button><span id="pots">0</span><button onclick="change('pots', 1)">+</button></div><button class="add-btn" onclick="addItem('Pots')">Add</button></div>
 </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<div id="order-list">
+<h3>Your Order:</h3>
+<div id="order-items"></div>
+<button id="send-btn" onclick="sendOrder()">Send Order</button>
+</div>
+</div>
 
-const firebaseConfig={
-  apiKey:"AIzaSyDMzEwys8RxGsehCJ2VlrnJeiAa_WY9Lgc",
-  authDomain:"sgwen-x.firebaseapp.com",
-  projectId:"sgwen-x"
-};
-
-const app=initializeApp(firebaseConfig);
-const auth=getAuth(app);
-const db=getFirestore(app);
-
-let userName="Unknown User";
-
-onAuthStateChanged(auth, async(user)=>{
-  if(user){
-    const snap=await getDoc(doc(db,"users",user.uid));
-    if(snap.exists()){
-      userName=snap.data().name;
-      document.getElementById("welcome").innerText="Logged in by: "+userName;
-    }
-  }
-});
-
-/* PASSWORD */
-const passInput=document.getElementById("pass");
-const eye=document.getElementById("eye");
-const enterBtn=document.getElementById("enterBtn");
-
-eye.onclick=()=>{
-  passInput.type = passInput.type==="password" ? "text" : "password";
-};
-
-enterBtn.onclick=()=>{
-  if(passInput.value==="sgwen123"){
-    document.getElementById("password-screen").style.display="none";
-    document.getElementById("shop-content").style.display="block";
-  }else{
-    alert("Wrong password");
-  }
-};
-
-/* ORDER */
+<script>
+function checkPass(){if(document.getElementById("pass").value==="sgwen123"){password-screen.style.display="none";shop-content.style.display="block"}else alert("Wrong password!")}
+function togglePassword(){let i=document.getElementById("pass");i.type=i.type==="password"?"text":"password"}
+function change(i,a){let e=document.getElementById(i);let n=parseInt(e.innerText)+a;if(n<0)n=0;e.innerText=n}
 let order=[];
-window.change=(id,v)=>{
-  let e=document.getElementById(id);
-  let n=parseInt(e.innerText)+v;
-  if(n<0)n=0;
-  e.innerText=n;
-};
-
-window.addItem=(name)=>{
-  let q=document.getElementById(name.toLowerCase()).innerText;
-  if(q==0)return;
-  order.push(name+" x "+q);
-  document.getElementById("order-items").innerHTML=order.join("<br>");
-};
+function addItem(n){let q=document.getElementById(n.toLowerCase()).innerText;if(q==0)return alert("Quantity must be > 0");order.push(`${n} x ${q}`);document.getElementById("order-items").innerHTML=order.join("<br>")}
 
 emailjs.init("R343iEUpx16F3VYfz");
 
-document.getElementById("send-btn").onclick=()=>{
-  if(order.length===0) return alert("No items");
+function sendOrder(){
+if(order.length==0){alert("No items added");return}
+if(!window.isAuthReady()){alert("Wait a moment...");return}
 
-  emailjs.send("service_21rqokl","template_hwaelip",{
-    user_name:userName,
-    order_text:order.join("\n")
-  }).then(()=>{
-    alert("Order sent");
-    order=[];
-    document.getElementById("order-items").innerHTML="";
-    document.getElementById("tent").innerText="0";
-    document.getElementById("rope").innerText="0";
-  });
-};
+const username = window.getCurrentUserName();
+
+emailjs.send("service_21rqokl","template_hwaelip",{
+username: username,
+order_text: order.join("\n")
+}).then(()=>{
+let b=document.getElementById("send-btn");b.innerText="Sent";
+order=[];document.getElementById("order-items").innerHTML="";
+["tent","rope","wood","pots"].forEach(id=>document.getElementById(id).innerText="0");
+setTimeout(()=>{b.innerText="Send Order"},2000)
+},e=>alert("Error: "+JSON.stringify(e)))
+}
 </script>
 
 </body>
